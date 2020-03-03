@@ -38,24 +38,9 @@ func main() {
  */
 func HandleResponse(response *http.Response) {
 	type GitUser struct {
-		Login             string
-		ID                int
-		NodeID            string
-		AvatarURL         string
-		GravatarID        string
-		URL               string
-		HTMLURL           string
-		FollowersURL      string
-		FollowingURL      string
-		GistsURL          string
-		StarredURL        string
-		SubscriptionsURL  string
-		OrganizationsURL  string
-		ReposURL          string
-		EventsURL         string
-		ReceivedEventsURL string
-		Type              string
-		SiteAdmin         bool
+		Login   string
+		URL     string
+		HTMLURL string `json:"html_url"`
 	}
 
 	fmt.Println("IN HERE??")
@@ -76,7 +61,8 @@ func HandleResponse(response *http.Response) {
 	if err != nil {
 		fmt.Println("Failed in HandleResponses's Unmarshal!", gitUsers)
 	} else {
-		fmt.Println(len(gitUsers))
-		fmt.Println(gitUsers)
+		for _, user := range gitUsers {
+			fmt.Println(user)
+		}
 	}
 }
