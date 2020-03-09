@@ -1,4 +1,4 @@
-package main
+package server
 
 import (
 	"fmt"
@@ -6,13 +6,13 @@ import (
 	"net/http"
 )
 
-func hello(w http.ResponseWriter, r *http.Request) {
+func all(w http.ResponseWriter, r *http.Request) {
 	fmt.Printf("INCOMING REQUEST: %v", r.Method)
 	io.WriteString(w, "Ur mum\n")
 }
 
-func main() {
-	http.HandleFunc("/hello", hello)
+func StartServer() {
+	http.HandleFunc("/all", all)
 
 	http.ListenAndServe(":8080", nil)
 }
