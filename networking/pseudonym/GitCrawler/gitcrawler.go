@@ -1,27 +1,47 @@
-package main
+package gitcrawler
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
+	"math/rand"
 	"net/http"
 	"os"
+	"strconv"
 	"time"
 )
 
-func main() {
+type GitUser struct {
+	Login   string
+	URL     string
+	HTMLURL string `json:"html_url"`
+	Bio     string `json:"bio"`
+}
+
+func GetRandomUsers() (*[]GitUser, error) {
 	request, err := http.NewRequest("GET", "https://api.github.com/users", nil)
 
 	if err != nil {
 		log.Fatalln(err)
 	}
 
-	bearerToken := os.Args[1]
+	bearerToken := os.Getenv("GIT_ACCESS_TOKEN")
 	request.Header.Set("Authorization", "Bearer "+bearerToken)
+
+	sinceMin := 1
+	sinceMax := 1
+	since := strconv.Itoa(rand.Intn(sinceMax) + sinceMin)
+
+	requestQuery := request.URL.Query()
+	requestQuery.Add("since", since)
+	request.URL.RawQuery = requestQuery.Encode()
+
 	client := http.Client{
 		Timeout: time.Duration(5 * time.Second),
 	}
+	fmt.Printf("Making request to Github API here: %v", request.URL.RawQuery)
 	response, err := client.Do(request)
 
 	if err != nil {
@@ -30,21 +50,20 @@ func main() {
 		fmt.Println(response)
 	}
 
-	HandleResponse(response)
-	fmt.Println("All done~~")
+	gitUsers, err := handleRandomUsersResponse(response)
+
+	if err != nil {
+		fmt.Println("Error getting random users!!")
+	} else {
+		fmt.Printf("Got users: %v", (*gitUsers))
+	}
+
+	return gitUsers, err
 }
 
 /*HandleResponse does...
  */
-func HandleResponse(response *http.Response) {
-	type GitUser struct {
-		Login   string
-		URL     string
-		HTMLURL string `json:"html_url"`
-	}
-
-	fmt.Println("IN HERE??")
-
+func handleRandomUsersResponse(response *http.Response) (*[]GitUser, error) {
 	var gitUsers []GitUser
 
 	defer response.Body.Close()
@@ -59,10 +78,7 @@ func HandleResponse(response *http.Response) {
 	err = json.Unmarshal(body, &gitUsers)
 
 	if err != nil {
-		fmt.Println("Failed in HandleResponses's Unmarshal!", gitUsers)
-	} else {
-		for _, user := range gitUsers {
-			fmt.Println(user)
-		}
+		return nil, errors.New("error retrieving users")
 	}
+	return &gitUsers, nil
 }
