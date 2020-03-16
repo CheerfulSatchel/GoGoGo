@@ -7,10 +7,12 @@ import (
 	"net/http"
 
 	"github.com/CheerfulSatchel/GoGoGo/networking/pseudonym/database"
+	"github.com/CheerfulSatchel/GoGoGo/networking/pseudonym/gitcrawler"
 )
 
 type Response struct {
 	Message string
+	Err     error
 }
 
 func all(w http.ResponseWriter, r *http.Request) {
@@ -20,14 +22,37 @@ func all(w http.ResponseWriter, r *http.Request) {
 }
 
 func addEntries(w http.ResponseWriter, r *http.Request) {
-	response := Response{""}
+	response := Response{"", nil}
+	httpReturnCode := http.StatusOK
+
 	if r.Method == "POST" {
-		response.Message = "Yay! Added new users to the database!"
-		w.WriteHeader(http.StatusOK)
+
+		randomGitusers, getRandomGitusersErr := gitcrawler.GetRandomUsers()
+		if getRandomGitusersErr != nil {
+			response.Message = "Failed to get random users..."
+			response.Err = getRandomGitusersErr
+		} else {
+			for _, randomGitusers := range *randomGitusers {
+				newPseudonym := &database.Pseudonym{
+					Username: randomGitusers.Login,
+				}
+				fmt.Println("Inserting user " + newPseudonym.Username)
+				err := database.InsertUserIntoTable(newPseudonym)
+				if err != nil {
+					response.Message = "Failed to insert user " + newPseudonym.Username
+					response.Err = err
+				} else {
+					response.Message = "YAY! Inserted user " + newPseudonym.Username
+				}
+			}
+		}
+
 	} else {
 		response.Message = "Sorry, GET method not accepted here :["
-		w.WriteHeader(http.StatusBadRequest)
+		httpReturnCode = http.StatusBadRequest
 	}
+
+	w.WriteHeader(httpReturnCode)
 
 	js, err := json.MarshalIndent(response, "", " ")
 	if err != nil {
