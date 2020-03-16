@@ -46,7 +46,7 @@ func connect() *pg.DB {
 }
 
 func (e *customError) Error() string {
-	return e.errorMessage
+	return "ERROR: " + e.errorMessage
 }
 
 func CreateTables() error {
@@ -62,6 +62,18 @@ func CreateTables() error {
 
 	fmt.Println("Successfully created tables!!")
 	return nil
+}
+
+func InsertUserIntoTable(newEntry interface{}) error {
+	if _, ok := newEntry.(*Pseudonym); ok {
+		fmt.Printf("Received pseudonym entry type~~")
+		err := pgdb.Insert(newEntry)
+		return err
+	} else {
+		fmt.Printf("Received wrong entry type...")
+		err := &customError{errorMessage: "Received wrong entry type..."}
+		return err
+	}
 }
 
 func Query() {
