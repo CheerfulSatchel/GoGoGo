@@ -17,16 +17,14 @@ type Pseudonym struct {
 	tableName struct{} `sql:"pseudonym"`
 	ID        int
 	Username  string
-	Details   *PseudonymDetails
 }
 
 type PseudonymDetails struct {
-	tableName   struct{} `sql:"pseudonymdetails`
-	HTMLURL     string
-	ID          int
-	Likes       int
-	PseudonymID int
-	Pseudonym   *Pseudonym
+	tableName struct{} `sql:"pseudonymdetails`
+	HTMLURL   string
+	ID        int
+	Likes     int
+	Pseudonym *Pseudonym
 }
 
 var pgdb *pg.DB
@@ -67,6 +65,18 @@ func CreateTables() error {
 func InsertUserIntoTable(newEntry interface{}) error {
 	if _, ok := newEntry.(*Pseudonym); ok {
 		fmt.Printf("Received pseudonym entry type~~")
+		err := pgdb.Insert(newEntry)
+		return err
+	} else {
+		fmt.Printf("Received wrong entry type...")
+		err := &customError{errorMessage: "Received wrong entry type..."}
+		return err
+	}
+}
+
+func InsertUserDetailIntoTable(newEntry interface{}) error {
+	if _, ok := newEntry.(*PseudonymDetails); ok {
+		fmt.Printf("Received pseudonym details entry type~~")
 		err := pgdb.Insert(newEntry)
 		return err
 	} else {

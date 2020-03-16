@@ -36,11 +36,27 @@ func addEntries(w http.ResponseWriter, r *http.Request) {
 				newPseudonym := &database.Pseudonym{
 					Username: randomGitusers.Login,
 				}
+
+				newPseudonymDetails := &database.PseudonymDetails{
+					HTMLURL:   randomGitusers.HTMLURL,
+					Likes:     0,
+					Pseudonym: newPseudonym,
+				}
+
 				fmt.Println("Inserting user " + newPseudonym.Username)
-				err := database.InsertUserIntoTable(newPseudonym)
-				if err != nil {
+				userErr := database.InsertUserIntoTable(newPseudonym)
+				if userErr != nil {
 					response.Message = "Failed to insert user " + newPseudonym.Username
-					response.Err = err
+					response.Err = userErr
+				} else {
+					response.Message = "YAY! Inserted user " + newPseudonym.Username
+				}
+
+				fmt.Println("Inserting user detail for user " + newPseudonymDetails.Pseudonym.Username)
+				userDetailsErr := database.InsertUserDetailIntoTable(newPseudonymDetails)
+				if userDetailsErr != nil {
+					response.Message = "Failed to insert user " + newPseudonym.Username
+					response.Err = userDetailsErr
 				} else {
 					response.Message = "YAY! Inserted user " + newPseudonym.Username
 				}
