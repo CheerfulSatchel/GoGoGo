@@ -20,11 +20,12 @@ type Pseudonym struct {
 }
 
 type PseudonymDetails struct {
-	tableName struct{} `sql:"pseudonymdetails`
-	HTMLURL   string
-	ID        int
-	Likes     int
-	Pseudonym *Pseudonym
+	tableName   struct{} `sql:"pseudonymdetails`
+	HTMLURL     string
+	ID          int
+	Likes       int
+	PseudonymID int
+	Pseudonym   *Pseudonym
 }
 
 var pgdb *pg.DB
@@ -87,20 +88,5 @@ func InsertUserDetailIntoTable(newEntry interface{}) error {
 }
 
 func Query() {
-
-	fmt.Println("YOOO")
-	fmt.Println(pgdb)
-	// var testperson []testpeople
-	// aUser := &Gituser{ID: 2, Name: "bob"}
-	// err := pgdb.Insert(aUser)
-	// fmt.Println(err)
-	// err := pgdb.Select(aUser)
-
-	// if err != nil {
-	// 	fmt.Printf("ERROR... %v", err)
-	// } else {
-	// 	fmt.Println(aUser)
-	// 	fmt.Println("ALL DONE :]")
-	// }
 
 }
