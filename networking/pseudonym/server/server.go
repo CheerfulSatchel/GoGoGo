@@ -6,10 +6,12 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/CheerfulSatchel/GoGoGo/networking/pseudonym/database"
 	"github.com/CheerfulSatchel/GoGoGo/networking/pseudonym/gitcrawler"
+	"github.com/julienschmidt/httprouter"
 )
 
 type Response struct {
@@ -17,13 +19,12 @@ type Response struct {
 	Err     error
 }
 
-func all(w http.ResponseWriter, r *http.Request) {
+func all(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	fmt.Printf("INCOMING REQUEST: %v", r.Method)
 	io.WriteString(w, "Ur mum\n")
-	database.Query()
 }
 
-func addEntries(w http.ResponseWriter, r *http.Request) {
+func addPseudonym(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	response := Response{"", nil}
 	httpReturnCode := http.StatusOK
 
@@ -76,13 +77,30 @@ func addEntries(w http.ResponseWriter, r *http.Request) {
 	w.Write(js)
 }
 
-func retrieveUser(w http.ResponseWriter, r *http.Request) {
+func getPseudonym(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	response := Response{"", nil}
 	httpReturnCode := http.StatusOK
 
 	if err := verifyMethodType(r.Method, "GET", &response, &w); err == nil {
-
 		w.WriteHeader(httpReturnCode)
+		givenIdInt, convertGivenIdErr := strconv.Atoi(ps.ByName("id"))
+		if convertGivenIdErr != nil {
+			fmt.Println("Error converting the given id to an integer!")
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		} else {
+			pseudonym, queryErr := database.Query(givenIdInt)
+			if queryErr != nil {
+				fmt.Println("Error querying id " + string(givenIdInt))
+				http.Error(w, err.Error(), http.StatusBadRequest)
+				return
+			} else {
+				response.Message = fmt.Sprintf("%v", pseudonym)
+				response.Err = nil
+			}
+
+		}
+
 	}
 	js, err := json.MarshalIndent(response, "", " ")
 	if err != nil {
@@ -104,9 +122,10 @@ func verifyMethodType(givenMethod, acceptedMethod string, response *Response, w 
 }
 
 func StartServer() {
-	http.HandleFunc("/all", all)
-	http.HandleFunc("/add", addEntries)
-	http.HandleFunc("/retrieve", retrieveUser)
+	router := httprouter.New()
+	router.GET("/all", all)
+	router.POST("/addPseudonym", addPseudonym)
+	router.GET("/pseudonym/:id", getPseudonym)
 
-	http.ListenAndServe(":8080", nil)
+	http.ListenAndServe(":8080", router)
 }
