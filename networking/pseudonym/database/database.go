@@ -87,15 +87,19 @@ func InsertUserDetailIntoTable(newEntry interface{}) error {
 	}
 }
 
-func Query(id int) (*Pseudonym, error) {
-	returnPseudonym := &Pseudonym{ID: id}
+func Query(id int) (*PseudonymDetails, error) {
+	returnPseudonymDetails := new(PseudonymDetails)
 
-	err := pgdb.Select(returnPseudonym)
+	err := pgdb.Model(returnPseudonymDetails).
+		Relation("Pseudonym").
+		Where("pseudonym_id = ?", id).
+		Select()
 
 	if err != nil {
+		fmt.Println(err.Error())
 		return nil, err
 	}
 
-	return returnPseudonym, nil
+	return returnPseudonymDetails, nil
 
 }
