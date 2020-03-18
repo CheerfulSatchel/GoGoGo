@@ -83,19 +83,20 @@ func getPseudonym(w http.ResponseWriter, r *http.Request, ps httprouter.Params) 
 
 	if err := verifyMethodType(r.Method, "GET", &response, &w); err == nil {
 		w.WriteHeader(httpReturnCode)
-		givenIdInt, convertGivenIdErr := strconv.Atoi(ps.ByName("id"))
-		if convertGivenIdErr != nil {
+		givenIDInt, convertGivenIDErr := strconv.Atoi(ps.ByName("id"))
+		if convertGivenIDErr != nil {
 			fmt.Println("Error converting the given id to an integer!")
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		} else {
-			pseudonym, queryErr := database.Query(givenIdInt)
+			pseudonymDetails, queryErr := database.Query(givenIDInt)
 			if queryErr != nil {
-				fmt.Println("Error querying id " + string(givenIdInt))
+				fmt.Println("Error querying id " + string(givenIDInt))
 				http.Error(w, err.Error(), http.StatusBadRequest)
 				return
 			} else {
-				response.Message = fmt.Sprintf("%v", pseudonym)
+				bytes, _ := json.Marshal(pseudonymDetails)
+				response.Message = fmt.Sprintf("%v", string(bytes))
 				response.Err = nil
 			}
 
