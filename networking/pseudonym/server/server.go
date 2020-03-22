@@ -37,6 +37,8 @@ func StartServer() {
 	receivedSignal := <-signalChannel
 	logger.Printf("Received terminate signal %v, gracefully shutting down.", receivedSignal)
 
-	shutdownContext, _ := context.WithTimeout(context.Background(), 30*time.Second)
+	shutdownContext, shutdownCancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer shutdownCancel()
+
 	server.Shutdown(shutdownContext)
 }
