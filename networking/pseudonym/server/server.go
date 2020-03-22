@@ -1,11 +1,42 @@
 package server
 
 import (
+	"context"
+	"log"
 	"net/http"
+	"os"
+	"os/signal"
+	"time"
 )
 
 func StartServer() {
+	logger := log.New(os.Stdout, "pseudonym-api", log.LstdFlags)
 	serverRoutes := AllRoutes()
 	router := NewRouter(serverRoutes)
-	http.ListenAndServe(":8080", router)
+
+	server := &http.Server{
+		Addr:         ":8080",
+		Handler:      router,
+		IdleTimeout:  120 * time.Second,
+		ReadTimeout:  1 * time.Second,
+		WriteTimeout: 1 * time.Second,
+	}
+
+	go func() {
+		serverErr := server.ListenAndServe()
+		if serverErr != nil {
+			logger.Fatal(serverErr)
+		}
+	}()
+
+	// For safely closing server...
+	signalChannel := make(chan os.Signal)
+	signal.Notify(signalChannel, os.Interrupt)
+	signal.Notify(signalChannel, os.Kill)
+
+	receivedSignal := <-signalChannel
+	logger.Printf("Received terminate signal %v, gracefully shutting down.", receivedSignal)
+
+	shutdownContext, _ := context.WithTimeout(context.Background(), 30*time.Second)
+	server.Shutdown(shutdownContext)
 }
