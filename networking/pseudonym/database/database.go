@@ -15,17 +15,17 @@ type customError struct {
 
 type Pseudonym struct {
 	tableName struct{} `sql:"pseudonym"`
-	ID        int
-	Username  string
+	ID        int      `json:"id"`
+	Username  string   `json:"username"`
 }
 
 type PseudonymDetails struct {
-	tableName   struct{} `sql:"pseudonymdetails`
-	HTMLURL     string
-	ID          int
-	Likes       int
-	PseudonymID int
-	Pseudonym   *Pseudonym
+	tableName   struct{}   `sql:"pseudonymdetails`
+	HTMLURL     string     `json:"html_url"`
+	ID          int        `json:"details_id"`
+	Likes       int        `json:"likes"`
+	PseudonymID int        `json:"-"`
+	Pseudonym   *Pseudonym `json:"pseudonym"`
 }
 
 var pgdb *pg.DB
