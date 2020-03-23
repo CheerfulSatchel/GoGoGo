@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/CheerfulSatchel/GoGoGo/networking/pseudonym/database"
+	"github.com/CheerfulSatchel/GoGoGo/networking/pseudonym/database_service/database"
 	"github.com/CheerfulSatchel/GoGoGo/networking/pseudonym/gitcrawler"
 	"github.com/julienschmidt/httprouter"
 )
