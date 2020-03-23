@@ -1,7 +1,7 @@
 package server
 
 import (
-	"github.com/CheerfulSatchel/GoGoGo/networking/pseudonym/handlers"
+	"github.com/CheerfulSatchel/GoGoGo/networking/pseudonym/service_service/handlers"
 	"github.com/julienschmidt/httprouter"
 )
 
