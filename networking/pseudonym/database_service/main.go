@@ -3,11 +3,11 @@ package main
 import (
 	"fmt"
 
-	"github.com/CheerfulSatchel/GoGoGo/networking/pseudonym/database_service/database"
+	"github.com/CheerfulSatchel/GoGoGo/networking/pseudonym/database_service/server"
 )
 
 func main() {
 	fmt.Println("Greetings~~")
 
-	database.CreateTables()
+	server.StartServer()
 }
