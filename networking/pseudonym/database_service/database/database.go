@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/CheerfulSatchel/GoGoGo/networking/pseudonym/database_service/models"
+
 	"github.com/go-pg/pg/orm"
 
 	"github.com/go-pg/pg"
@@ -11,21 +13,6 @@ import (
 
 type customError struct {
 	errorMessage string
-}
-
-type Pseudonym struct {
-	tableName struct{} `sql:"pseudonym"`
-	ID        int      `json:"id"`
-	Username  string   `json:"username"`
-}
-
-type PseudonymDetails struct {
-	tableName   struct{}   `sql:"pseudonymdetails`
-	HTMLURL     string     `json:"html_url"`
-	ID          int        `json:"details_id"`
-	Likes       int        `json:"likes"`
-	PseudonymID int        `json:"-"`
-	Pseudonym   *Pseudonym `json:"pseudonym"`
 }
 
 var pgdb *pg.DB
@@ -49,7 +36,7 @@ func (e *customError) Error() string {
 }
 
 func CreateTables() error {
-	for _, model := range []interface{}{&Pseudonym{}, &PseudonymDetails{}} {
+	for _, model := range []interface{}{&models.Pseudonym{}, &models.PseudonymDetails{}} {
 		err := pgdb.CreateTable(model, &orm.CreateTableOptions{
 			FKConstraints: true,
 		})
@@ -64,7 +51,7 @@ func CreateTables() error {
 }
 
 func InsertUserIntoTable(newEntry interface{}) error {
-	if _, ok := newEntry.(*Pseudonym); ok {
+	if _, ok := newEntry.(*models.Pseudonym); ok {
 		fmt.Printf("Received pseudonym entry type~~")
 		err := pgdb.Insert(newEntry)
 		return err
@@ -76,7 +63,7 @@ func InsertUserIntoTable(newEntry interface{}) error {
 }
 
 func InsertUserDetailIntoTable(newEntry interface{}) error {
-	if _, ok := newEntry.(*PseudonymDetails); ok {
+	if _, ok := newEntry.(*models.PseudonymDetails); ok {
 		fmt.Printf("Received pseudonym details entry type~~")
 		err := pgdb.Insert(newEntry)
 		return err
@@ -87,8 +74,8 @@ func InsertUserDetailIntoTable(newEntry interface{}) error {
 	}
 }
 
-func Query(id int) (*PseudonymDetails, error) {
-	returnPseudonymDetails := new(PseudonymDetails)
+func Query(id int) (*models.PseudonymDetails, error) {
+	returnPseudonymDetails := new(models.PseudonymDetails)
 
 	err := pgdb.Model(returnPseudonymDetails).
 		Relation("Pseudonym").
