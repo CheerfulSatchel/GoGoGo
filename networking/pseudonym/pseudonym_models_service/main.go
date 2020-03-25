@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/CheerfulSatchel/GoGoGo/networking/pseudonym/database_service/server"
+	"github.com/CheerfulSatchel/GoGoGo/networking/pseudonym/pseudonym_models_service/server"
 )
 
 func main() {

@@ -6,8 +6,8 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/CheerfulSatchel/GoGoGo/networking/pseudonym/database_service/database"
-	"github.com/CheerfulSatchel/GoGoGo/networking/pseudonym/database_service/models"
+	"github.com/CheerfulSatchel/GoGoGo/networking/pseudonym/pseudonym_models_service/database"
+	"github.com/CheerfulSatchel/GoGoGo/networking/pseudonym/pseudonym_models_service/models"
 	"github.com/julienschmidt/httprouter"
 )
 
