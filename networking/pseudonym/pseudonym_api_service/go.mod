@@ -1,4 +1,4 @@
-module github.com/CheerfulSatchel/GoGoGo/networking/pseudonym/server_service
+module github.com/CheerfulSatchel/GoGoGo/networking/pseudonym/pseudonym_api_service
 
 go 1.13
 
