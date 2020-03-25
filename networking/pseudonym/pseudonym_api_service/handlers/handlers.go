@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"time"
 
+	"github.com/CheerfulSatchel/GoGoGo/networking/pseudonym/pseudonym_api_service/models"
 	"github.com/julienschmidt/httprouter"
 )
 
@@ -29,6 +31,60 @@ func (response *Response) ToJSON(w io.Writer) error {
 	encoder.SetIndent("", " ")
 
 	return encoder.Encode(response)
+}
+
+func CreatePseudonym(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	verifyMethodTypeErr := verifyMethodType(r.Method, http.MethodPost, &w)
+
+	if verifyMethodTypeErr != nil {
+		http.Error(w, verifyMethodTypeErr.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	receivedPayload := new(models.Payload)
+
+	defer r.Body.Close()
+	decodePayloadErr := receivedPayload.FromJSON(r.Body)
+
+	if decodePayloadErr != nil {
+		http.Error(w, decodePayloadErr.Error(), http.StatusBadRequest)
+		return
+	}
+
+	request, err := http.NewRequest(http.MethodPut, "http://127.0.0.1:8081/pseudonym", r.Body)
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	client := http.Client{
+		Timeout: time.Duration(2 * time.Second),
+	}
+
+	modelResponse, modelErr := client.Do(request)
+
+	if modelErr != nil {
+		http.Error(w, modelErr.Error(), http.StatusFailedDependency)
+		return
+	}
+
+	defer modelResponse.Body.Close()
+	response := createResponse(
+		"Added pseudonym successfully.",
+		nil,
+		modelResponse.Body)
+
+	fmt.Printf("%v", response)
+	// w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+	toJSONErr := response.ToJSON(w)
+
+	if toJSONErr != nil {
+		http.Error(w, toJSONErr.Error(), http.StatusInternalServerError)
+		return
+	}
+
 }
 
 // func GetPseudonym(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
