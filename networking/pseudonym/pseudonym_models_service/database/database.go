@@ -36,7 +36,7 @@ func (e *customError) Error() string {
 }
 
 func CreateTables() error {
-	for _, model := range []interface{}{&models.Pseudonym{}, &models.PseudonymDetails{}} {
+	for _, model := range []interface{}{&models.Pseudonym{}} {
 		err := pgdb.CreateTable(model, &orm.CreateTableOptions{
 			FKConstraints: true,
 		})
@@ -50,7 +50,7 @@ func CreateTables() error {
 	return nil
 }
 
-func InsertUserIntoTable(newEntry interface{}) error {
+func InsertPseudonym(newEntry interface{}) error {
 	if _, ok := newEntry.(*models.Pseudonym); ok {
 		fmt.Printf("Received pseudonym entry type~~")
 		err := pgdb.Insert(newEntry)
@@ -62,31 +62,19 @@ func InsertUserIntoTable(newEntry interface{}) error {
 	}
 }
 
-func InsertUserDetailIntoTable(newEntry interface{}) error {
-	if _, ok := newEntry.(*models.PseudonymDetails); ok {
-		fmt.Printf("Received pseudonym details entry type~~")
-		err := pgdb.Insert(newEntry)
-		return err
-	} else {
-		fmt.Printf("Received wrong entry type...")
-		err := &customError{errorMessage: "Received wrong entry type..."}
-		return err
-	}
-}
+// func Query(id int) (*models.PseudonymDetails, error) {
+// 	returnPseudonymDetails := new(models.PseudonymDetails)
 
-func Query(id int) (*models.PseudonymDetails, error) {
-	returnPseudonymDetails := new(models.PseudonymDetails)
+// 	err := pgdb.Model(returnPseudonymDetails).
+// 		Relation("Pseudonym").
+// 		Where("pseudonym_id = ?", id).
+// 		Select()
 
-	err := pgdb.Model(returnPseudonymDetails).
-		Relation("Pseudonym").
-		Where("pseudonym_id = ?", id).
-		Select()
+// 	if err != nil {
+// 		fmt.Println(err.Error())
+// 		return nil, err
+// 	}
 
-	if err != nil {
-		fmt.Println(err.Error())
-		return nil, err
-	}
+// 	return returnPseudonymDetails, nil
 
-	return returnPseudonymDetails, nil
-
-}
+// }
