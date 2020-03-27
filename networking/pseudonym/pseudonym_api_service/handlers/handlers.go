@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -34,7 +35,7 @@ func (response *Response) ToJSON(w io.Writer) error {
 }
 
 func CreatePseudonym(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	verifyMethodTypeErr := verifyMethodType(r.Method, http.MethodPost, &w)
+	verifyMethodTypeErr := verifyMethodType(r.Method, http.MethodPut, &w)
 
 	if verifyMethodTypeErr != nil {
 		http.Error(w, verifyMethodTypeErr.Error(), http.StatusInternalServerError)
@@ -51,7 +52,14 @@ func CreatePseudonym(w http.ResponseWriter, r *http.Request, ps httprouter.Param
 		return
 	}
 
-	request, err := http.NewRequest(http.MethodPut, "http://127.0.0.1:8081/pseudonym", r.Body)
+	newRequestBody, newRequestErr := json.Marshal(receivedPayload)
+
+	if newRequestErr != nil {
+		http.Error(w, newRequestErr.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	request, err := http.NewRequest(http.MethodPut, "http://127.0.0.1:8081/pseudonym", bytes.NewBuffer(newRequestBody))
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
