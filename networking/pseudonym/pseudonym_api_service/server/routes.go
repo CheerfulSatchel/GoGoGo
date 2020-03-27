@@ -17,7 +17,7 @@ type Routes []Route
 func AllRoutes() Routes {
 	routes := Routes{
 		// Route{"index", "GET", "/", handlers.AllPseudonyms},
-		Route{"create", "POST", "/pseudonym", handlers.CreatePseudonym},
+		Route{"create", "PUT", "/pseudonym", handlers.CreatePseudonym},
 		// Route{"read", "GET", "/pseudonym/:id", handlers.GetPseudonym},
 	}
 
