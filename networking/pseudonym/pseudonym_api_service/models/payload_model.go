@@ -6,7 +6,7 @@ import (
 )
 
 type Payload struct {
-	Username string `json:"user_name"`
+	Username string `json:"username"`
 	HTMLURL  string `json:"html_url"`
 	Likes    int    `json:"likes" pg:",use_zero"`
 }
