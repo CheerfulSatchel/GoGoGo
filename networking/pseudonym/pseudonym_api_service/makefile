@@ -1,7 +1,7 @@
 #!/bin/bash
 
 build:
-	docker build -t pseudonym-api .
+	docker build -t pseudonym_api_service .
 
 run:
-	docker run --env-file ./.env.list -it -p 8080:8080 pseudonym-api
+	docker run -it -p 8080:8080 pseudonym_api_service

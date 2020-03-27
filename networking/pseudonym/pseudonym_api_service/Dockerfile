@@ -1,7 +1,7 @@
 FROM golang:1.13.8
-RUN mkdir /app
-ADD . /app
+RUN mkdir /api_service
+ADD . /api_service
 
-WORKDIR /app
+WORKDIR /api_service
 RUN go build -o main .
-CMD ["/app/main"]
+CMD ["/api_service/main"]
