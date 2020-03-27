@@ -1,0 +1,21 @@
+version: '3.3'
+services:
+  pseudonym_api_service:
+    container_name: pseudonym_api_service
+    build:
+      context: pseudonym_api_service
+    ports:
+      - '8080:8080'
+
+  pseudonym_models_service:
+    container_name: pseudonym_models_service
+    build:
+      context: pseudonym_models_service
+    ports:
+      - '8081:8081'
+
+  postgres_service:
+    image: postgres:latest
+    container_name: pseudonym_postgres
+    ports:
+      - '5432:5432'
