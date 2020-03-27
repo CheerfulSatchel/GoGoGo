@@ -17,5 +17,9 @@ services:
   postgres_service:
     image: postgres:latest
     container_name: pseudonym_postgres
+    environment:
+      - POSTGRES_USER=${PSEUDONYM_USER}
+      - POSTGRES_PASSWORD=${PSEUDONYM_PASSWORD}
+      - POSTGRES_DATABASE=${PSEUDONYM_DATABASE}
     ports:
       - '5432:5432'
