@@ -25,6 +25,7 @@ func init() {
 
 func connect() *pg.DB {
 	return pg.Connect(&pg.Options{
+		Addr:     "postgres-service:5432",
 		User:     os.Getenv("PSEUDONYM_USER"),
 		Password: os.Getenv("PSEUDONYM_PASSWORD"),
 		Database: os.Getenv("PSEUDONYM_DATABASE"),
