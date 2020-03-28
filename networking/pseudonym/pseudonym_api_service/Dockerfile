@@ -5,3 +5,5 @@ ADD . /api_service
 WORKDIR /api_service
 RUN go build -o main .
 CMD ["/api_service/main"]
+
+EXPOSE 8080
