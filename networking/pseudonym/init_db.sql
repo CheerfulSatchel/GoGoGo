@@ -1,0 +1,2 @@
+CREATE DATABASE pseudonym;
+GRANT ALL PRIVILEGES ON DATABASE pseudonym TO jameswu;
