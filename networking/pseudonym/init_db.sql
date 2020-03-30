@@ -1,13 +1,13 @@
 CREATE DATABASE pseudonym;
 
-GRANT ALL PRIVILEGES ON DATABASE pseudonym_yeet TO jameswu;
+GRANT ALL PRIVILEGES ON DATABASE pseudonym TO jameswu;
 
 \connect pseudonym;
 
 CREATE TABLE pseudonym
 (
-    id integer PRIMARY KEY,
+    id serial PRIMARY KEY,
     username VARCHAR,
-    html_url VARCHAR,
+    htmlurl VARCHAR,
     likes integer
 );
