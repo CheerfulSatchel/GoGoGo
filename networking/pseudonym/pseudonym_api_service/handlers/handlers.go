@@ -59,7 +59,7 @@ func CreatePseudonym(w http.ResponseWriter, r *http.Request, ps httprouter.Param
 		return
 	}
 
-	request, err := http.NewRequest(http.MethodPut, "http://127.0.0.1:8081/pseudonym", bytes.NewBuffer(newRequestBody))
+	request, err := http.NewRequest(http.MethodPut, "models-service:8081/pseudonym", bytes.NewBuffer(newRequestBody))
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
